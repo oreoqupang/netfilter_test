@@ -58,9 +58,9 @@ static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg,
 	tcp_len = (((tcp)->th_offset & 0xf0) >> 4)*4;
 	port = ntohs(tcp->th_dport);
 
-	if(port == 80){
+	if(port == 80 || port == 443){
 		http = (pkt+ip_len+tcp_len);
-		if( !memcmp(http, "GET", 3) || !memcmp(http, "POST", 4)){
+		if( !memcmp(http, "GET", 3) || !memcmp(http, "POST", 4) || !memcmp(http, "HEAD", 4) || !memcmp(http, "PUT", 3) || !memcmp(http, "DELETE", 6) || !memcmp(http, "OPTIONS", 7)){
 			snprintf(victim, 100, "Host: %s", target_host);
 			if(strstr(http, victim)) {
 				printf("BLOCKED:::::\n%s\n", http);
